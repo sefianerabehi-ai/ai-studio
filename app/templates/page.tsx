@@ -1,0 +1,1 @@
+export default function Templates(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>Templates</h1><p>Creative templates will appear here.</p><a href="/">← Back</a></main>}
