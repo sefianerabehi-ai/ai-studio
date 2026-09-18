@@ -1,0 +1,1 @@
+"use client";import {Home,Image,Video,WandSparkles} from "lucide-react";export default function Create(){return <div style={{padding:40,fontFamily:"system-ui"}}><h1>Create</h1><p>AI Studio creation workspace.</p><p><a href="/">← Back to studio</a></p></div>}
