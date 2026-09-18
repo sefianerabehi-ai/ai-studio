@@ -1,12 +1,13 @@
 "use client";
 import {useState} from "react";
+import Link from "next/link";
 import {motion,AnimatePresence} from "framer-motion";
 import {Sparkles,Image as ImageIcon,Video,Upload,Settings2,History,FolderOpen,Layers3,ChevronDown,Plus,Sun,Moon,ArrowUpRight,WandSparkles,Zap,ShieldCheck,SlidersHorizontal,X} from "lucide-react";
 
 const tools=[{id:"image",name:"Image",icon:ImageIcon,desc:"Generate detailed images from text"},{id:"video",name:"Video",icon:Video,desc:"Create cinematic AI videos"},{id:"edit",name:"Edit",icon:WandSparkles,desc:"Transform your images and videos"}];
 
 export default function Home(){
- const [mode,setMode]=useState("image"),[dark,setDark]=useState(true),[prompt,setPrompt]=useState(""),[open,setOpen]=useState(false),[file,setFile]=useState<string|null>(null),[fileName,setFileName]=useState(""),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
+ const [mode,setMode]=useState("image"),[dark,setDark]=useState(true),[prompt,setPrompt]=useState(""),[open,setOpen]=useState(false),[file,setFile]=useState<string|null>(null),[fileName,setFileName]=useState(""),[busy,setBusy]=useState(false),[status,setStatus]=useState(""),[result,setResult]=useState<{id:string;outputUrl?:string;provider?:string;message?:string}|null>(null);
  const choose=(e:React.ChangeEvent<HTMLInputElement>)=>{const f=e.target.files?.[0];if(!f)return;setFile(URL.createObjectURL(f));setFileName(f.name)};
  return <main className={dark?"app dark":"app"}>
   <aside className="sidebar">
@@ -29,17 +30,18 @@ export default function Home(){
       <div className="controls"><label>Model<button onClick={()=>setOpen(!open)}>Creative v1 <ChevronDown size={15}/></button></label><label>Aspect ratio<button>16:9 <ChevronDown size={15}/></button></label><label>{mode==="image"?"Resolution":"Duration"}<button>{mode==="image"?"2048 × 1152":"8 seconds"} <ChevronDown size={15}/></button></label><label>{mode==="image"?"Variations":"Quality"}<button>{mode==="image"?"4 images":"High"} <ChevronDown size={15}/></button></label></div>
       {open&&<div className="menu"><b>Creative v1</b><span>Fast generation</span><b>Detail Pro</b><span>Maximum detail</span><b>Motion Studio</b><span>Designed for video</span></div>}
       <button className="generate" disabled={busy} onClick={async()=>{
- setBusy(true);setStatus("");
+ setBusy(true);setStatus("");setResult(null);
  try{
   const endpoint=mode==="image"?"/api/generate/image":mode==="video"?"/api/generate/video":"/api/edit";
   const res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt,aspectRatio:"16:9",resolution:mode==="image"?"2048x1152":"1080p",duration:8,variations:4,mediaUrl:file})});
   const data=await res.json();
   if(!res.ok) throw new Error(data.message||data.error||"Generation request failed.");
-  setStatus(data.message||"Request queued.");
+  setStatus(data.message||"Request queued."); setResult(data); localStorage.setItem("ai-studio-last-result",JSON.stringify({...data,mode,prompt,createdAt:new Date().toISOString()}));
  }catch(error){setStatus(error instanceof Error?error.message:"Something went wrong.");}
  finally{setBusy(false);}
 }}><Sparkles size={18}/> {busy?"Preparing…":"Generate"} <span>⌘ ↵</span></button>
-{status&&<div className="status" role="status">{status}</div>}</>}
+{status&&<div className="status" role="status">{status}</div>}
+{result&&<div className="resultcard"><div className="resulthead"><div><span className="eyebrow">RESULT</span><h3>{result.outputUrl?"Generation complete":"Request submitted"}</h3></div><Link href="/history">View history</Link></div>{result.outputUrl?(mode==="video"?<video src={result.outputUrl} controls className="resultmedia"/>:<img src={result.outputUrl} alt="Generated result" className="resultmedia"/>):<p>{result.message||"The provider is processing your request."}</p>}{result.outputUrl&&<div className="resultactions"><a href={result.outputUrl} target="_blank" rel="noreferrer">Open result</a><button onClick={()=>{setPrompt(prompt);setStatus("Prompt ready for regeneration.")}}>Regenerate</button></div>}</div>}</>}
     </motion.div></AnimatePresence>
     <div className="lower"><div className="sectiontitle"><div><span className="eyebrow">WORKFLOW</span><h3>Start with a tool</h3></div><a href="/tools">View all <ArrowUpRight size={15}/></a></div><div className="cards">{tools.map(t=>{const I=t.icon;return <button key={t.id} onClick={()=>setMode(t.id)} className="toolcard"><div className="toolicon"><I size={20}/></div><div><b>{t.name}</b><span>{t.desc}</span></div><ArrowUpRight size={16}/></button>})}</div></div>
     <div className="trust"><ShieldCheck size={17}/><span>Files and provider keys are designed to stay server-side. No secrets in the browser.</span></div>
