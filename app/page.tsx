@@ -36,7 +36,7 @@ export default function Home(){
   const res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt,aspectRatio:"16:9",resolution:mode==="image"?"2048x1152":"1080p",duration:8,variations:4,mediaUrl:file})});
   const data=await res.json();
   if(!res.ok) throw new Error(data.message||data.error||"Generation request failed.");
-  setStatus(data.message||"Request queued."); setResult(data); localStorage.setItem("ai-studio-last-result",JSON.stringify({...data,mode,prompt,createdAt:new Date().toISOString()}));
+  setStatus(data.message||"Request queued."); setResult(data); const entry={...data,mode,prompt,createdAt:new Date().toISOString()}; localStorage.setItem("ai-studio-last-result",JSON.stringify(entry)); const old=JSON.parse(localStorage.getItem("ai-studio-history")||"[]"); localStorage.setItem("ai-studio-history",JSON.stringify([entry,...old.filter((x:any)=>x.id!==entry.id)].slice(0,50)));
  }catch(error){setStatus(error instanceof Error?error.message:"Something went wrong.");}
  finally{setBusy(false);}
 }}><Sparkles size={18}/> {busy?"Preparing…":"Generate"} <span>⌘ ↵</span></button>
