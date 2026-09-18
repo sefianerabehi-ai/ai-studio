@@ -1,0 +1,1 @@
+export default function Projects(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>Projects</h1><p>Your creative projects will appear here.</p><a href="/">← Back</a></main>}
