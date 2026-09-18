@@ -1,1 +1,2 @@
-export default function History(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>History</h1><p>Your generation history will appear here.</p><a href="/">← Back</a></main>}
+import Link from "next/link";import {Clock3,ArrowLeft,Sparkles} from "lucide-react";
+export default function History(){return <main className="page"><header className="pagehead"><Link href="/" className="back"><ArrowLeft size={16}/> Studio</Link><div><h1>History</h1><p>Track your recent generation requests.</p></div></header><section className="empty panel"><Clock3 size={42}/><h2>Your history is empty</h2><p>Generated results and processing jobs will be listed here.</p><Link href="/create" className="generate"><Sparkles size={17}/> Create something</Link></section></main>}
