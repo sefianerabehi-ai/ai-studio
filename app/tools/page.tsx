@@ -1,0 +1,1 @@
+import {Sparkles,Image as ImageIcon,Video,WandSparkles} from "lucide-react";export default function Tools(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>Tools</h1><p>Image, video and editing tools.</p><a href="/">← Back</a></main>}
