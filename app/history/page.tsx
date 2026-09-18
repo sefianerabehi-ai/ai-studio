@@ -1,0 +1,1 @@
+export default function History(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>History</h1><p>Your generation history will appear here.</p><a href="/">← Back</a></main>}
