@@ -1,0 +1,1 @@
+export default function Settings(){return <main style={{padding:40,fontFamily:"system-ui"}}><h1>Settings</h1><p>Workspace and provider settings.</p><a href="/">← Back</a></main>
